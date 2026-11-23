@@ -1,0 +1,42 @@
+{
+  "product": "iPhone13,2",
+  "socId": "8101",
+  "socRevision": "11",
+  "panicString": "SOCD report detected: (iBoot panic)",
+  "trmStatus": 1,
+  "bootProgressRegister": "0x20800004",
+  "repairStatus": "1",
+  "decoded_socd_trace": {
+    "header": "iBoot Panic: : d6d8d5372d7850a:245",
+    "board": "d53gap:0xf",
+    "chip": "8101:0x11",
+    "build": "RELEASE:mBoot-20457.42.5",
+    "call_stack": [
+      "0x00000001fc078698",
+      "0x00000001fc0786e0",
+      "0x00000001fc101a04",
+      "0x00000001fc0c95b8",
+      "0x00000001fc0c98ac",
+      "0x00000001fc0ca5c8",
+      "0x00000001fc082514",
+      "0x00000001fc06de80",
+      "0x00000001fc070e74",
+      "0x00000001fc06fccc",
+      "0x00000001fc0727fc",
+      "0x00000001fc04d0bc",
+      "0x00000001fc0528c4",
+      "0x00000001fc050c30",
+      "0x00000001fc0503cc",
+      "0x00000001fc04fc40",
+      "0x00000001fc04fa10",
+      "0x00000001fc04f710",
+      "0x00000001fc0c7540"
+    ],
+    "breadcrumbs_raw": "003a(2960000) 3000f(72647472) 3000c(72647472) 40029 3000d(72647472) 30010 3000f(7264736b) 3000c(7264736b) 3000d(7264736b) 30010 3000f(726b726e) 3000c(726b726e) 40029 3000d(726b726e) 30010",
+    "breadcrumbs_ascii": {
+      "0x72647472": "rdtr (RestoreDeviceTree)",
+      "0x7264736b": "rdsk (RestoreRamDisk)",
+      "0x726b726e": "rkrn (RestoreKernelCache)"
+    }
+  }
+}

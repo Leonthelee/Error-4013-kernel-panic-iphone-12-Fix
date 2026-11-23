@@ -1,0 +1,22 @@
+# Python / uv
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+
+# Never commit proprietary Apple binaries, DLLs, or IPSWs
+*.ipsw
+*.im4p
+*.img4
+*.bin
+*.dll
+*.exe
+apple_sdk/
+
+# Logs & OS temp
+*.log
+*.ips
+*.synced
+.DS_Store
+Thumbs.db

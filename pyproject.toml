@@ -1,0 +1,17 @@
+[project]
+name = "error-4013-kernel-panic-iphone-12-fix"
+version = "1.0.0"
+description = "Root-cause reverse engineering, zero-data-loss Recovery exit tool, and iBoot Pre-Flight analyzer for iPhone 12 Error 4013 (Rosaline I2C timeout panic in mBoot-20457.42.5)"
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "MIT" }
+dependencies = [
+    "capstone>=5.0.0",
+    "pyimg4>=0.8.8",
+    "remotezip>=0.12.3",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=8.0.0",
+]
