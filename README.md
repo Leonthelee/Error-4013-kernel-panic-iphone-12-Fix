@@ -6,17 +6,17 @@
 
 ## Resumen Ejecutivo (Español)
 
-Si tu **iPhone 12 (`iPhone13,2`) con pantalla reemplazada (`repairStatus = 1`)** quedó atrapado en **Modo Recuperación (Error `4013` a los 6.2 segundos)** al intentar actualizar a **iOS 27.2.1 (`24B156`)** por OTA o por PC (*Dispositivos Apple* / *iTunes*), **tu placa madre, tu memoria NAND y tus datos NO están dañados**.
+Si tu **iPhone 12 (`iPhone13,2`) con falla en Face ID / sensor superior TrueDepth** (incluso siendo **100% original de fábrica y nunca abierto**, o con flex/pantalla reemplazada, donde iOS marca internamente `repairStatus = 1`) quedó atrapado en **Modo Recuperación (Error `4013` a los 6.2 segundos)** al intentar actualizar a **iOS 27.2.1 (`24B156`)** por OTA o por PC (*Dispositivos Apple* / *iTunes*), **tu placa madre, tu memoria NAND y tus datos NO están dañados**.
 
 ### 1. ¿Cuál es la causa real? (Ingeniería Inversa de `mBoot-20457.42.5`)
 
 Al desensamblar el bootloader `iBoot` / `iBEC` (`mBoot-20457.42.5`, base `0x1fc04c000`) y cruzarlo con el volcado `SOCD` (`iBoot Panic: d6d8d5372d7850a:245`) y los logs `iPhoneUpdater`:
 
-1. Cuando el iPhone intenta instalar una actualización o restaurarse (cargando `rdtr` *RestoreDeviceTree*, `rdsk` *RestoreRamDisk* y `rkrn` *RestoreKernelCache*), la rutina `UpdateDeviceTree` (`0x1fc0ca5c8`) llama a `0x1fc0c9868` para consultar **`"rosaline-serial-num"`** (*Rosaline* es el nombre interno de Apple para el chip del sensor de luz ambiental / TrueTone en la pantalla).
+1. Cuando el iPhone intenta instalar una actualización o restaurarse (cargando `rdtr` *RestoreDeviceTree*, `rdsk` *RestoreRamDisk* y `rkrn` *RestoreKernelCache*), la rutina `UpdateDeviceTree` (`0x1fc0ca5c8`) llama a `0x1fc0c9868` para consultar **`"rosaline-serial-num"`** (*Rosaline* es el nombre clave interno de Apple para el conjunto de sensores frontales del sistema **TrueDepth / Face ID**: *Flood Illuminator*, proximidad y luz ambiental en el flex superior `J4600`).
 2. En `0x1fc0c958c`, `iBoot` verifica el modo de arranque:
-   * **En arranque normal (`w0 == 0`):** ejecuta `cbz w0, #0x1fc0c95c0` y **OMITE** el comando I2C `0x1804`. Por eso el sistema operativo normal arranca y funciona sin fallas.
-   * **En actualización / restauración (`w0 != 0`):** ejecuta `mov w8, #0x1804` y llama a la transferencia I2C (`0x1fc1018e0`) desde `0x1fc0c95b8`.
-3. Cuando el sensor alternativo de una pantalla reemplazada no responde al comando `0x1804`, el bucle de polling MMIO (`[x8, #0x14]` bit 27 en `0x1fc1019d4`) agota el timeout y, **en vez de devolver un código de error (`-1`)**, el driver I2C llama directamente a **`panic(0x0d6d8d5372d7850a, 245)`** en `0x1fc101a04`:
+   * **En arranque normal (`w0 == 0`):** ejecuta `cbz w0, #0x1fc0c95c0` y **OMITE** el comando I2C `0x1804`. Por eso el teléfono en uso diario arranca y funciona sin ningún problema aunque tenga Face ID averiado.
+   * **En actualización / restauración (`w0 != 0`):** ejecuta `mov w8, #0x1804` y llama a la transferencia I2C (`0x1fc1018e0`) desde `0x1fc0c95b8` para leer el número de serie de fábrica del módulo *Rosaline*.
+3. Cuando el sensor *Rosaline* está averiado (por humedad en la rejilla del auricular superior, caída de tensión o flex dañado — lo que además hace que iOS registre `repairStatus = "1"` aunque el equipo jamás se haya abierto) o es un repuesto genérico y no responde al comando `0x1804`, el bucle de polling MMIO (`[x8, #0x14]` bit 27 en `0x1fc1019d4`) agota el timeout y, **en vez de devolver un código de error (`-1`)**, el driver I2C llama directamente a **`panic(0x0d6d8d5372d7850a, 245)`** en `0x1fc101a04`:
 
 ```armasm
 0x1fc1019d4: ldr    x8, [x19, #0x20]        ; Base MMIO controlador I2C
@@ -82,7 +82,7 @@ uv run python iboot_preflight.py
 
 ## English Summary
 
-Updating or restoring an **iPhone 12 (`iPhone13,2` / `d53gap`)** with a replacement screen (`repairStatus = 1`) to **iOS 27.2.1 (`24B156`)** triggers a deterministic **`iBoot Panic` (`d6d8d5372d7850a:245`)** inside **`mBoot-20457.42.5`** while populating `"rosaline-serial-num"` (`cmd 0x1804` over I2C) for `RestoreDeviceTree` (`rdtr`). Because `RestoreOS` never boots, user data on NAND remains untouched.
+Updating or restoring a **100% factory-original, unopened iPhone 12 (`iPhone13,2` / `d53gap`) with an in-field Face ID / TrueDepth sensor fault** (or a third-party upper sensor flex, both of which cause iOS to flag `repairStatus = 1`) to **iOS 27.2.1 (`24B156`)** triggers a deterministic **`iBoot Panic` (`d6d8d5372d7850a:245`)** inside **`mBoot-20457.42.5`** while querying `"rosaline-serial-num"` (`cmd 0x1804` over I2C to the *Rosaline* Flood Illuminator / proximity / ambient light module on `J4600`) for `RestoreDeviceTree` (`rdtr`). Because `RestoreOS` never boots, user data on NAND remains completely untouched.
 
 * Use **`kick_recovery.py`** on Windows to invoke Apple's local `MobileDevice.dll` (`AMRecoveryModeDeviceSetAutoBoot(dev, 1)` + `AMRecoveryModeDeviceReboot`) and boot back into your existing iOS with zero data loss.
 * Use **`iboot_preflight.py`** to inspect future Apple IPSWs in ~3 seconds (~1 MB HTTP Range fetch) before updating.

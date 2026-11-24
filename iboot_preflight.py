@@ -144,7 +144,7 @@ def print_verdict(label: str, res: dict) -> int:
     if code == 2:
         print("  🚨 VEREDICTO: SEMÁFORO ROJO (BLOQUEADO)")
         print(f"     Contiene exactamente el bootloader roto ({KNOWN_BAD_MBOOT}).")
-        print("     NO ACTUALIZAR: causará Error 4013 / iBoot Panic en iPhone 12 con pantalla reemplazada.")
+        print("     NO ACTUALIZAR: causará Error 4013 / iBoot Panic en iPhone 12 con falla en Face ID (Rosaline).")
     elif code == 1:
         print("  ⚠️  VEREDICTO: SEMÁFORO AMARILLO / RIESGO ALTO")
         print(f"     El bootloader cambió ({res['mboot_version']}), pero sigue teniendo")

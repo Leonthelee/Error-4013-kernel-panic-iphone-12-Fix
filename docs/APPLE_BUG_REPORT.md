@@ -8,7 +8,7 @@ Submit at [https://feedbackassistant.apple.com](https://feedbackassistant.apple.
 ## Description
 
 ### Summary
-Updating or restoring an **iPhone 12 (`iPhone13,2` / `d53gap`, `CPID: 0x8101`, `socRevision: 0x11`)** with `repairStatus: "1"` (replacement display / aftermarket Rosaline ambient light sensor) to **iOS 27.2.1 (`24B156`)** deterministically triggers an **iBoot Panic** inside **`mBoot-20457.42.5`** before XNU (`RestoreKernelCache`) starts.
+Updating or restoring a **100% factory-original, never-opened iPhone 12 (`iPhone13,2` / `d53gap`, `CPID: 0x8101`, `socRevision: 0x11`)** that has an existing **Face ID / TrueDepth (`Rosaline` Flood Illuminator / proximity sensor) hardware fault** (which causes iOS Parts & Service History to set `repairStatus: "1"`, or on devices with a replacement sensor flex) to **iOS 27.2.1 (`24B156`)** deterministically triggers an **iBoot Panic** inside **`mBoot-20457.42.5`** before XNU (`RestoreKernelCache`) starts — bricking genuine, unmodified Apple devices into Recovery Mode (`Error 4013`).
 
 This reproduces identically across:
 1. **OTA updates** (`24B119` → `24B156`, resulting in `MobileSoftwareUpdateErrorDomain error 78` bootloop).
